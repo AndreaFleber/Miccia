@@ -1,27 +1,27 @@
-import random
+name: miccia
 
-# Legge il testo
-with open("testo.txt", "r", encoding="utf-8") as f:
-    text = f.read()
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
 
-words = text.split()
+jobs:
+  burn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-# Se non ci sono più parole, esce
-if len(words) <= 1:
-    exit()
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
-# Calcola il centro
-center = len(words) // 2
+      - name: Burn one word
+        run: python miccia.py
 
-# Sceglie una parola vicino al centro
-offset = random.choice([-2, -1, 0, 1, 2])
-index = max(0, min(len(words) - 1, center + offset))
-
-# Rimuove la parola
-del words[index]
-
-# Riscrive il testo
-new_text = " ".join(words)
-
-with open("testo.txt", "w", encoding="utf-8") as f:
-    f.write(new_text)
+      - name: Commit changes
+        run: |
+          git config user.name "miccia"
+          git config user.email "miccia@users.noreply.github.com"
+          git add testo.txt
+          git diff --cached --quiet || git commit -m "consumo"
+          git push
