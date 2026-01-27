@@ -1,6 +1,9 @@
 name: miccia
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
